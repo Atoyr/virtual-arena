@@ -1,13 +1,12 @@
 // internal/storage/storage.go
 package storage
 
-import "io"
-
 type Storage interface {
   // map.json 用
-  SaveMapJSON(tenantID, mapID string, data []byte) error
-  LoadMapJSON(tenantID, mapID string) ([]byte, error)
+  LoadMap(mapID string) ([]byte, error)
+	// ListMaps() ([]string, error)
 
   // タイル画像用
-	LoadTileset(tenantID, tilesetId string) ([]byte, error)
+	LoadTileset(mapID, tilesetID string) ([]byte, error)
+	// ListTilesets() ([]string, error)
 }

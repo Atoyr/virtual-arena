@@ -13,11 +13,17 @@ func main() {
     r := gin.Default()
 
     // マップ一覧 / 編集用 API
-    r.GET  ("/maps",           handler.ListMaps)
-    r.POST ("/maps",           handler.CreateMap)
-    r.GET  ("/maps/:id",       handler.GetMap)
-    r.PUT  ("/maps/:id",       handler.UpdateMap)
-    r.DELETE("/maps/:id",      handler.DeleteMap)
+    r.GET   ("/maps",           handler.ListMaps)
+    r.POST  ("/maps",           handler.CreateMap)
+
+    r.GET   ("/maps/:id",       handler.GetMap)
+    r.PUT   ("/maps/:id",       handler.UpdateMap)
+    r.DELETE("/maps/:id",       handler.DeleteMap)
+
+		r.GET   ("/maps/:id/tilesets",   									handler.ListTilesets)
+		r.GET   ("/maps/:id/tilesets/:tilesetName.png",   handler.ListTilesets)
+
+
 
     // タイル静的配信（例: /maps/123/tiles/0/1/2.png）
     // tiles を動的に返すハンドラ

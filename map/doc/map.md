@@ -1,0 +1,164 @@
+# map.jsonの構造
+map.jsonは`tiled`のtmxを参考にjson形式で構築しています
+
+``` map
+
+{
+  // マップサイズ（タイル単位）
+  "width": 10,          // マップの横タイル数
+  "height": 5,          // マップの縦タイル数
+
+  // タイルサイズ（ピクセル単位）
+  "tilewidth": 32,      // １タイルの幅
+  "tileheight": 32,     // １タイルの高さ
+
+  // 描画設定
+  "orientation": "orthogonal",  // マップの向き（orthogonal: 矩形格子）
+  "renderorder": "right-down",   // 描画順（右へ→下へ）
+  "infinite": false,             // 無限マップかどうか
+
+  // 次に追加されるレイヤー／オブジェクトのID管理
+  "nextlayerid": 4,      // 新規レイヤー追加時のID
+  "nextobjectid": 1,     // 新規オブジェクト追加時のID
+
+  // マップ全体のカスタムプロパティ
+  "properties": [
+    {
+      "name": "theme",       // プロパティ名
+      "type": "string",      // 型（string, bool, int, color など）
+      "value": "forest"      // 値（ここでは森テーマ）
+    }
+  ],
+
+  // 使用するタイルセット一覧
+  "tilesets": [
+    {
+      "firstgid": 1,          // このタイルセットの開始 GID
+      "name": "terrain",      // タイルセット名
+      "tilewidth": 32,        // 各タイル幅
+      "tileheight": 32,       // 各タイル高さ
+      "margin": 0,            // シート余白
+      "spacing": 0,           // タイル間隔
+      "columns": 4,           // カラム数
+      "tilecount": 16,        // タイル総数
+      "image": "terrain.png", // 画像ファイル名
+      "imagewidth": 128,      // 画像横幅
+      "imageheight": 128,     // 画像縦幅
+
+      // 個別タイルのプロパティ定義（例：衝突判定）
+      "tiles": [
+        {
+          "id": 5,            // タイルID（0始まり）
+          "properties": [
+            {
+              "name": "collidable",  // 衝突判定フラグ
+              "type": "bool",         // 型
+              "value": true           // 通行不可に設定
+            }
+          ]
+        }
+      ]
+    }
+  ],
+
+  // レイヤー一覧
+  "layers": [
+    {
+      "id": 1,
+      "name": "ground",      // レイヤー名
+      "type": "tilelayer",   // タイルレイヤー
+      "width": 10,
+      "height": 5,
+      "visible": true,       // 可視状態
+      "opacity": 1,          // 不透明度
+      "offsetx": 0,          // Xオフセット
+      "offsety": 0,          // Yオフセット
+      "properties": [],      // レイヤー固有プロパティ
+      "data": [              // GID配列（幅×高 分の要素）
+        1,1,1,1,1,1,1,1,1,1,
+        1,2,2,2,2,2,2,2,2,1,
+        1,2,3,3,3,3,3,3,2,1,
+        1,2,2,2,2,2,2,2,2,1,
+        1,1,1,1,1,1,1,1,1,1
+      ]
+    },
+    {
+      "id": 2,
+      "name": "collision",   // 衝突判定用レイヤー
+      "type": "tilelayer",
+      "width": 10,
+      "height": 5,
+      "visible": true,
+      "opacity": 1,
+      "offsetx": 0,
+      "offsety": 0,
+      "properties": [],
+      "data": [
+        1,1,1,1,1,1,1,1,1,1,
+        1,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,1,
+        1,0,0,0,0,0,0,0,0,1,
+        1,1,1,1,1,1,1,1,1,1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "objects",     // オブジェクトレイヤー
+      "type": "objectgroup",
+      "visible": true,
+      "opacity": 1,
+      "offsetx": 0,
+      "offsety": 0,
+      "properties": [],
+
+      // マップ上のオブジェクト一覧
+      "objects": [
+        {
+          "id": 1,
+          "name": "Tree",      // オブジェクト名
+          "type": "",          // タイプ（用途に応じて）
+          "x": 64,             // ピクセル座標 X
+          "y": 64,             // ピクセル座標 Y
+          "width": 32,         // 幅
+          "height": 32,        // 高さ
+          "rotation": 0,       // 回転角度
+          "visible": true,     // 可視フラグ
+          "properties": [
+            {
+              "name": "interactive",  // インタラクト可能か
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+```
+
+
+``` tile
+{
+  "firstgid": 1,               // このタイルセットで利用開始する GID
+  "source": "tileset.tsx",     // 外部 TSX 定義ファイル（参照） or
+  "name": "terrain",           // （外部定義でない場合）タイルセット名
+  "tilewidth": 32,             // タイル幅
+  "tileheight": 32,            // タイル高さ
+  "margin": 0,                 // スプライトシートの余白
+  "spacing": 0,                // タイル間の隙間
+  "columns": 10,               // １行あたりのタイル数
+  "tilecount": 100,            // タイル総数
+  "image": "tileset.png",      // スプライトシート画像
+  "imagewidth": 320,           // 画像幅
+  "imageheight": 320,          // 画像高さ
+  "tiles": [                   // タイルごとの個別プロパティ定義（オプション）
+    {
+      "id": 5,
+      "properties": [
+        { "name": "collidable", "type": "bool", "value": true }
+      ]
+    }
+  ]
+}
+```

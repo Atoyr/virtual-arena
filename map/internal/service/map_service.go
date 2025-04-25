@@ -3,7 +3,6 @@ package service
 import (
     "encoding/json"
     "fmt"
-    "io/ioutil"
     "os"
     "path/filepath"
     "time"
@@ -28,14 +27,14 @@ func NewMapService(basePath string) *MapService {
 
 func (s *MapService) List() ([]Map, error) {
     // basePath 配下のフォルダを列挙してマップ一覧を構築
-    dirs, err := ioutil.ReadDir(s.basePath)
+    dirs, err := os.ReadDir(s.basePath)
     if err != nil {
         return nil, err
     }
     var out []Map
     for _, d := range dirs {
         if d.IsDir() {
-            raw, _ := ioutil.ReadFile(filepath.Join(s.basePath, d.Name(), "map.json"))
+            raw, _ := os.ReadFile(filepath.Join(s.basePath, d.Name(), "map.json"))
             var m Map
             json.Unmarshal(raw, &m)
             out = append(out, m)
@@ -46,7 +45,7 @@ func (s *MapService) List() ([]Map, error) {
 
 func (s *MapService) Get(id string) (*Map, error) {
     path := filepath.Join(s.basePath, id, "map.json")
-    raw, err := ioutil.ReadFile(path)
+    raw, err := os.ReadFile(path)
     if err != nil {
         return nil, err
     }
@@ -65,7 +64,7 @@ func (s *MapService) Create(m *Map) (*Map, error) {
     os.MkdirAll(dir, 0755)
     m.Updated = time.Now()
     raw, _ := json.MarshalIndent(m, "", "  ")
-    ioutil.WriteFile(filepath.Join(dir, "map.json"), raw, 0644)
+    os.WriteFile(filepath.Join(dir, "map.json"), raw, 0644)
     return m, nil
 }
 
@@ -74,7 +73,7 @@ func (s *MapService) Update(id string, m *Map) (*Map, error) {
     m.ID     = id
     m.Updated = time.Now()
     raw, _ := json.MarshalIndent(m, "", "  ")
-    ioutil.WriteFile(filepath.Join(dir, "map.json"), raw, 0644)
+    os.WriteFile(filepath.Join(dir, "map.json"), raw, 0644)
     return m, nil
 }
 
