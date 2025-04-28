@@ -1,39 +1,32 @@
 package main
 
 import (
-    "log"
-    "net/http"
-    "github.com/gorilla/websocket"
+	"log"
+
+	"github.com/gin-gonic/gin"
+
+	"github.com/atoyr/virtual-arena/internal/handlers"
+	"github.com/atoyr/virtual-arena/internal/hub"
 )
 
-var upgrader = websocket.Upgrader{ CheckOrigin: func(r *http.Request) bool { return true } }
-
-func wsHandler(w http.ResponseWriter, r *http.Request) {
-    conn, err := upgrader.Upgrade(w, r, nil)
-    if err != nil {
-        log.Println("upgrade:", err)
-        return
-    }
-    defer conn.Close()
-    // まずは PING‐PONG だけ試す
-    for {
-        _, msg, err := conn.ReadMessage()
-        if err != nil {
-            log.Println("read:", err)
-            break
-        }
-        log.Printf("recv: %s", msg)
-        conn.WriteMessage(websocket.TextMessage, []byte("pong"))
-    }
-}
-
 func main() {
-    // 静的ファイル配信
-    fs := http.FileServer(http.Dir("../frontend/public"))
-    http.Handle("/", fs)
-    // WebSocket エンドポイント
-    http.HandleFunc("/ws", wsHandler)
+	// ハブの作成と実行
+	h := hub.NewHub()
+	go h.Run()
 
-    log.Println("backend listening on :8080")
-    log.Fatal(http.ListenAndServe(":8080", nil))
+	// Ginルーターの設定
+	r := gin.Default()
+
+	// 静的ファイル配信
+	// FIXME: 静的ファイルのパスを修正
+	r.Static("/", "../frontend/public")
+
+	// WebSocketエンドポイント
+	r.GET("/ws", handlers.ServeWS(h))
+
+	// サーバー起動
+	log.Println("backend listening on :8080")
+	if err := r.Run(":8080"); err != nil {
+		log.Fatal("server error:", err)
+	}
 }
