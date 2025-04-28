@@ -12,7 +12,7 @@ var mapSvc = service.NewMapService("./data/maps")
 
 // ListMaps: マップ一覧を返却します
 func ListMaps(c *gin.Context) {
-	maps, err := mapSvc.List()
+	maps, err := mapSvc.ListMaps()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

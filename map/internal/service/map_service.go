@@ -25,7 +25,7 @@ func NewMapService(basePath string) *MapService {
 	return &MapService{basePath: basePath}
 }
 
-func (s *MapService) List() ([]Map, error) {
+func (s *MapService) ListMaps() ([]Map, error) {
 	// basePath 配下のフォルダを列挙してマップ一覧を構築
 	dirs, err := os.ReadDir(s.basePath)
 	if err != nil {
