@@ -1,4 +1,4 @@
-package controller
+package handler
 
 import (
 	"net/http"
@@ -18,10 +18,10 @@ func GetMaps(svc *service.MapService) gin.HandlerFunc {
 	}
 }
 
-func GetMapMeta(svc *service.MapStore) gin.HandlerFunc {
+func GetMapMeta(svc *service.MapService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("mapID")
-		m, err := svc.LoadMap(id)
+		m, err := svc.Get(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "map not found"})
 			return
