@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/atoyr/virtual-arena/map-service/internal/model"
 	"github.com/atoyr/virtual-arena/map-service/internal/service"
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,7 @@ func ListMaps(c *gin.Context) {
 // GetMap: 指定 ID のマップ JSON を返却します
 func GetMap(c *gin.Context) {
 	id := c.Param("id")
-	m, err := mapSvc.Get(id)
+	m, err := mapSvc.GetMap(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -33,12 +34,12 @@ func GetMap(c *gin.Context) {
 
 // CreateMap: 新規マップを作成します（JSON ボディ受け取り）
 func CreateMap(c *gin.Context) {
-	var req service.Map
+	var req model.Map
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	created, err := mapSvc.Create(&req)
+	created, err := mapSvc.CreateMap(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -49,12 +50,12 @@ func CreateMap(c *gin.Context) {
 // UpdateMap: 既存マップを更新します
 func UpdateMap(c *gin.Context) {
 	id := c.Param("id")
-	var req service.Map
+	var req model.Map
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	updated, err := mapSvc.Update(id, &req)
+	updated, err := mapSvc.UpdateMap(id, &req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -65,7 +66,7 @@ func UpdateMap(c *gin.Context) {
 // DeleteMap: 指定 ID のマップを削除します
 func DeleteMap(c *gin.Context) {
 	id := c.Param("id")
-	if err := mapSvc.Delete(id); err != nil {
+	if err := mapSvc.DeleteMap(id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
