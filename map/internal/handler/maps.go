@@ -3,13 +3,13 @@ package handler
 import (
 	"net/http"
 
-	"github.com/atoyr/virtual-arena/map-service/internal/service"
+	"github.com/atoyr/virtual-arena/map-service/internal/controller"
 	"github.com/gin-gonic/gin"
 )
 
-func GetMaps(svc *service.MapService) gin.HandlerFunc {
+func GetMapsHandler(mapController *controller.MapController) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		maps, err := svc.ListMaps()
+		maps, err := mapController.ListMaps()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
@@ -18,10 +18,10 @@ func GetMaps(svc *service.MapService) gin.HandlerFunc {
 	}
 }
 
-func GetMapMeta(svc *service.MapService) gin.HandlerFunc {
+func GetMapMetaHandler(mapController *controller.MapController) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id := c.Param("mapID")
-		m, err := svc.Get(id)
+		m, err := mapController.GetMap(id)
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "map not found"})
 			return
