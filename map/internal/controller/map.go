@@ -20,5 +20,5 @@ func (mc *MapController) ListMaps() ([]model.Map, error) {
 }
 
 func (mc *MapController) GetMap(id string) (*model.Map, error) {
-	return mc.service.GetMap(id)
+	return mc.service.GetMapByID(id)
 }

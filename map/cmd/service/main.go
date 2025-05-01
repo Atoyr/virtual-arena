@@ -5,13 +5,15 @@ import (
 
 	"github.com/atoyr/virtual-arena/map-service/internal/controller"
 	"github.com/atoyr/virtual-arena/map-service/internal/handler"
+	"github.com/atoyr/virtual-arena/map-service/internal/repository"
 	"github.com/atoyr/virtual-arena/map-service/internal/service"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	r := gin.Default()
-	svc := service.NewMapService("")
+	repo := repository.NewMapRepository("")
+	svc := service.NewMapService(repo)
 	ctrl := controller.NewController(svc)
 
 	// マップ一覧 / 編集用 API
